@@ -1,0 +1,39 @@
+record_types: 
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    game_number:
+      pos: 0
+      length: 4
+      cobol_code: "9(4)"
+      description: "Game Number."
+    game_name:
+      pos: 4
+      length: 30
+      cobol_code: "X(30)"
+      description: "Game Name."
+    price_of_ticket:
+      pos: 32
+      length: 6
+      cobol_code: "99.9"
+      description: "Price of Ticket."
+    start_date:
+      pos: 38
+      length: 10
+      cobol_code: "X(10)"
+      description: "Start Date."
+    end_date:
+      pos: 48
+      length: 10
+      cobol_code: "X(10)"
+      description: "End Date."
+    prizes_thru_date:
+      pos: 58
+      length: 10
+      cobol_code: "X(10)"
+      description: "Prizes Thru Date."
+    odds:
+      pos: 68
+      length: 72
+      cobol_code: "9.99"
+      description: "Odds."

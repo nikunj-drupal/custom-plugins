@@ -1,0 +1,439 @@
+<?php
+
+use Drupal\Core\Config\Entity\ConfigEntityType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Imports configuration entity needed for FTP sources.
+ */
+function nylotto_data_import_update_8701() {
+  \Drupal::entityDefinitionUpdateManager()->installEntityType(new ConfigEntityType([
+    'id' => 'import_source',
+    'label' => new TranslatableMarkup('Import Source'),
+    'config_prefix' => 'import_source',
+    'admin_permission' => 'administer site configuration',
+    'label_callback' => 'getLabelFromPlugin',
+    'entity_keys' => ['id' => 'id'],
+    'config_export' => [
+      "id",
+      "label",
+      "server",
+      "port",
+      "path",
+      "user",
+      "password",
+      "cron_type",
+      "import_schedule",
+    ],
+  ]));
+}
+
+/**
+ * Imports configuration entity needed for FTP sources.
+ */
+function nylotto_data_import_update_8702() {
+  \Drupal::entityDefinitionUpdateManager()->installEntityType(new ConfigEntityType([
+    'id' => 'import_ftp_source',
+    'label' => new TranslatableMarkup('Import Source'),
+    'config_prefix' => 'import_ftp_source',
+    'admin_permission' => 'administer site configuration',
+    'label_callback' => 'getLabelFromPlugin',
+    'entity_keys' => ['id' => 'id'],
+    'config_export' => [
+      "id",
+      "label",
+      "server",
+      "port",
+      "path",
+      "user",
+      "password",
+      "cron_type",
+      "import_schedule",
+    ],
+  ]));
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8703() {
+  $entity_type = \Drupal::service('entity_type.manager')->getDefinition('node');
+  \Drupal::service('entity.definition_update_manager')->updateEntityType($entity_type);
+
+  $entity_type = \Drupal::service('entity_type.manager')->getDefinition('paragraph');
+  \Drupal::service('entity.definition_update_manager')->updateEntityType($entity_type);
+  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8705() {
+  $storage_definition = BaseFieldDefinition::create('map')->setLabel(t('Normalized'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('normalized', 'node', 'node', $storage_definition);
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('normalized', 'paragraph', 'paragraph', $storage_definition);
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8707() {
+  $storage_definition = BaseFieldDefinition::create('map')->setLabel(t('Normalized'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('normalized', 'taxonomy_term', 'taxonomy_term', $storage_definition);
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8708() {
+  $storage_definition = BaseFieldDefinition::create('map')->setLabel(t('Normalized'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('normalized', 'taxonomy_term', 'taxonomy_term', $storage_definition);
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8709() {
+  $storage_definition = BaseFieldDefinition::create('map')->setLabel(t('Normalized'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('normalized', 'taxonomy_term', 'taxonomy_term', $storage_definition);
+}
+
+/**
+ * Updates entity updates.
+ */
+function nylotto_data_import_update_8710() {
+  $update_manager = \Drupal::service('entity.definition_update_manager');
+  $definition = $update_manager->getFieldStorageDefinition('normalized', 'taxonomy_term');
+  $update_manager->uninstallFieldStorageDefinition($definition);
+  return t('Taxonomy term: uninstalled normalized field.');
+}
+
+/**
+ * Remove old test imports.
+ */
+function nylotto_data_import_update_8711(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+
+    // The count of nodes visited so far.
+    $sandbox['progress'] = 0;
+
+    // Total paragraphs that must be visited.
+    $ids = \Drupal::entityQuery('paragraph')
+      ->condition('type', 'drawing_data')
+      ->execute();
+    $sandbox['max'] = count($ids);
+    $sandbox['pargraph_ids'] = $ids;
+
+    // A place to store messages during the run.
+    $sandbox['messages'] = [];
+
+    // Last node read via the query.
+    $sandbox['current_node'] = -1;
+  }
+
+  $ids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'drawing_data')
+    ->execute();
+  $sandbox['pargraph_ids'] = $ids;
+  // Process nodes by groups of 10 (arbitrary value).
+  // When a group is processed, the batch update engine determines
+  // whether it should continue processing in the same request or provide
+  // progress feedback to the user and wait for the next request.
+  $limit = 50;
+
+  for ($x = 0; $x < $limit; $x++) {
+    $entity = entity_load('paragraph', array_shift($sandbox['pargraph_ids']));
+    if ($entity) {
+      $entity->delete();
+    }
+    $sandbox['progress']++;
+    $sandbox['current_paragraph'] = $sandbox['pargraph_ids'][$x];
+  }
+
+  // Set the "finished" status, to tell batch engine whether this function
+  // needs to run again. If you set a float, this will indicate the progress
+  // of the batch so the progress bar will update.
+  $sandbox['#finished'] = $sandbox['progress'] >= $sandbox['max'] ? TRUE : $sandbox['progress'] / $sandbox['max'];
+
+  // Set up a per-run message; Make a copy of $sandbox so we can change it.
+  // This is simply a debugging stanza to illustrate how to capture status
+  // from each pass through hook_update_N().
+  $sandbox_status = $sandbox;
+
+  // Don't want them in the output.
+  unset($sandbox_status['messages']);
+  $sandbox['messages'][] = t('$sandbox=') . print_r($sandbox_status, TRUE);
+  if ($sandbox['#finished']) {
+
+    // hook_update_N() may optionally return a string which will be displayed
+    // to the user.
+    $final_message = '<ul><li>' . implode('</li><li>', $sandbox['messages']) . "</li></ul>";
+    return t('The batch_example demonstration update did what it was supposed to do: @message', [
+      '@message' => $final_message,
+    ]);
+  }
+}
+
+/**
+ * Remove old test imports.
+ */
+function nylotto_data_import_update_8712(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+
+    // The count of nodes visited so far.
+    $sandbox['progress'] = 0;
+
+    // Total paragraphs that must be visited.
+    $ids = \Drupal::entityQuery('paragraph')
+      ->condition('type', 'drawing_data')
+      ->execute();
+    $sandbox['max'] = count($ids);
+    $sandbox['pargraph_ids'] = $ids;
+
+    // A place to store messages during the run.
+    $sandbox['messages'] = [];
+
+    // Last node read via the query.
+    $sandbox['current_node'] = -1;
+  }
+
+  $ids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'drawing_data')
+    ->execute();
+  $sandbox['pargraph_ids'] = $ids;
+  // Process nodes by groups of 10 (arbitrary value).
+  // When a group is processed, the batch update engine determines
+  // whether it should continue processing in the same request or provide
+  // progress feedback to the user and wait for the next request.
+  $limit = 50;
+
+  for ($x = 0; $x < $limit; $x++) {
+    $entity = entity_load('paragraph', array_shift($sandbox['pargraph_ids']));
+    if ($entity) {
+      $entity->delete();
+    }
+    $sandbox['progress']++;
+    $sandbox['current_paragraph'] = $sandbox['pargraph_ids'][$x];
+  }
+
+  // Set the "finished" status, to tell batch engine whether this function
+  // needs to run again. If you set a float, this will indicate the progress
+  // of the batch so the progress bar will update.
+  $sandbox['#finished'] = $sandbox['progress'] >= $sandbox['max'] ? TRUE : $sandbox['progress'] / $sandbox['max'];
+
+  // Set up a per-run message; Make a copy of $sandbox so we can change it.
+  // This is simply a debugging stanza to illustrate how to capture status
+  // from each pass through hook_update_N().
+  $sandbox_status = $sandbox;
+
+  // Don't want them in the output.
+  unset($sandbox_status['messages']);
+  $sandbox['messages'][] = t('$sandbox=') . print_r($sandbox_status, TRUE);
+  if ($sandbox['#finished']) {
+
+    // hook_update_N() may optionally return a string which will be displayed
+    // to the user.
+    $final_message = '<ul><li>' . implode('</li><li>', $sandbox['messages']) . "</li></ul>";
+    return t('The batch_example demonstration update did what it was supposed to do: @message', [
+      '@message' => $final_message,
+    ]);
+  }
+}
+
+/**
+ * Remove old test imports.
+ */
+function nylotto_data_import_update_8713(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+
+    // The count of nodes visited so far.
+    $sandbox['progress'] = 0;
+
+    // Total paragraphs that must be visited.
+    $ids = \Drupal::entityQuery('paragraph')
+      ->condition('type', 'drawing_data')
+      ->execute();
+    $sandbox['max'] = count($ids);
+    $sandbox['pargraph_ids'] = $ids;
+
+    // A place to store messages during the run.
+    $sandbox['messages'] = [];
+
+    // Last node read via the query.
+    $sandbox['current_node'] = -1;
+  }
+
+  $ids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'drawing_data')
+    ->execute();
+  $sandbox['pargraph_ids'] = $ids;
+  // Process nodes by groups of 10 (arbitrary value).
+  // When a group is processed, the batch update engine determines
+  // whether it should continue processing in the same request or provide
+  // progress feedback to the user and wait for the next request.
+  $limit = 50;
+
+  for ($x = 0; $x < $limit; $x++) {
+    $entity = entity_load('paragraph', array_shift($sandbox['pargraph_ids']));
+    if ($entity) {
+      $entity->delete();
+    }
+    $sandbox['progress']++;
+    $sandbox['current_paragraph'] = $sandbox['pargraph_ids'][$x];
+  }
+
+  // Set the "finished" status, to tell batch engine whether this function
+  // needs to run again. If you set a float, this will indicate the progress
+  // of the batch so the progress bar will update.
+  $sandbox['#finished'] = $sandbox['progress'] >= $sandbox['max'] ? TRUE : $sandbox['progress'] / $sandbox['max'];
+
+  // Set up a per-run message; Make a copy of $sandbox so we can change it.
+  // This is simply a debugging stanza to illustrate how to capture status
+  // from each pass through hook_update_N().
+  $sandbox_status = $sandbox;
+
+  // Don't want them in the output.
+  unset($sandbox_status['messages']);
+  $sandbox['messages'][] = t('$sandbox=') . print_r($sandbox_status, TRUE);
+  if ($sandbox['#finished']) {
+
+    // hook_update_N() may optionally return a string which will be displayed
+    // to the user.
+    $final_message = '<ul><li>' . implode('</li><li>', $sandbox['messages']) . "</li></ul>";
+    return t('The batch_example demonstration update did what it was supposed to do: @message', [
+      '@message' => $final_message,
+    ]);
+  }
+}
+
+/**
+ * Remove old test imports.
+ */
+function nylotto_data_import_update_8714(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+
+    // The count of nodes visited so far.
+    $sandbox['progress'] = 0;
+
+    // Total paragraphs that must be visited.
+    $ids = \Drupal::entityQuery('paragraph')
+      ->condition('type', 'drawing_data')
+      ->execute();
+    $sandbox['max'] = count($ids);
+    $sandbox['pargraph_ids'] = $ids;
+
+    // A place to store messages during the run.
+    $sandbox['messages'] = [];
+
+    // Last node read via the query.
+    $sandbox['current_node'] = -1;
+  }
+
+  $ids = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'drawing_data')
+    ->execute();
+  $sandbox['pargraph_ids'] = $ids;
+  // Process nodes by groups of 10 (arbitrary value).
+  // When a group is processed, the batch update engine determines
+  // whether it should continue processing in the same request or provide
+  // progress feedback to the user and wait for the next request.
+  $limit = 50;
+
+  for ($x = 0; $x < $limit; $x++) {
+    $entity = entity_load('paragraph', array_shift($sandbox['pargraph_ids']));
+    if ($entity) {
+      $entity->delete();
+    }
+    $sandbox['progress']++;
+    $sandbox['current_paragraph'] = $sandbox['pargraph_ids'][$x];
+  }
+
+  // Set the "finished" status, to tell batch engine whether this function
+  // needs to run again. If you set a float, this will indicate the progress
+  // of the batch so the progress bar will update.
+  $sandbox['#finished'] = $sandbox['progress'] >= $sandbox['max'] ? TRUE : $sandbox['progress'] / $sandbox['max'];
+
+  // Set up a per-run message; Make a copy of $sandbox so we can change it.
+  // This is simply a debugging stanza to illustrate how to capture status
+  // from each pass through hook_update_N().
+  $sandbox_status = $sandbox;
+
+  // Don't want them in the output.
+  unset($sandbox_status['messages']);
+  $sandbox['messages'][] = t('$sandbox=') . print_r($sandbox_status, TRUE);
+  if ($sandbox['#finished']) {
+
+    // hook_update_N() may optionally return a string which will be displayed
+    // to the user.
+    $final_message = '<ul><li>' . implode('</li><li>', $sandbox['messages']) . "</li></ul>";
+    return t('The batch_example demonstration update did what it was supposed to do: @message', [
+      '@message' => $final_message,
+    ]);
+  }
+}
+
+/**
+ * Remove draw data revision.
+ */
+function nylotto_data_import_update_8899() {
+
+  $query = \Drupal::database()->delete('paragraphs_item');
+  $query->condition('id', '234441');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item');
+  $query->condition('id', '234501');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_field_data');
+  $query->condition('id', '234441');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_field_data');
+  $query->condition('id', '234501');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_revision');
+  $query->condition('id', '234441');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_revision');
+  $query->condition('id', '234501');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_revision_field_data');
+  $query->condition('id', '234441');
+  $query->execute();
+  $query = \Drupal::database()->delete('paragraphs_item_revision_field_data');
+  $query->condition('id', '234501');
+  $query->execute();
+}
+
+/**
+ * Update Odds and Prize value.
+ */
+function nylotto_data_import_update_8999() {
+
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', 'scratch_off')
+    ->execute();
+  foreach ($ids as $key => $value) {
+    $scratch_off = entity_load('node', $value);
+    $game_number = trim($scratch_off->get('field_game_number')->getString());
+    $odds_prizes = $scratch_off->get('field_odds')->getValue();
+    if (!empty($odds_prizes)) {
+      $field_section_title = 0;
+      foreach ($odds_prizes as $odds_prizes_key => $odds_prizes_value) {
+        $field_section_title++;
+        $identifier = 'game-' . $game_number . '-' . $field_section_title;
+        $paragraph = entity_load('paragraph', $odds_prizes_value['target_id']);
+        $paragraph->set('field_section_title', $identifier);
+        $paragraph->save();
+      }
+    }
+  }
+}

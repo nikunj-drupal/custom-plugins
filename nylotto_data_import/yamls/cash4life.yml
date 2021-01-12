@@ -1,0 +1,189 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+      keys:
+        draw_date
+    winning_numbers:
+      pos: 13
+      length: 14
+      keys:
+        winning_numbers
+    cash_ball:
+      pos: 28
+      length: 2
+      keys:
+        bonus
+    first_prize_amount:
+      pos: 31
+      length: 25
+      keys:
+        winners_tables|local_winners_table|1|amount
+        winners_tables|national_winners_table|1|amount
+    first_prize_winners:
+      pos: 57
+      length: 9
+      keys:
+        winners_tables|local_winners_table|1|winners
+    second_prize_amount:
+      pos: 67
+      length: 25
+      keys:
+        winners_tables|local_winners_table|2|amount
+        winners_tables|national_winners_table|2|amount
+    second_prize_winners:
+      pos: 93
+      length: 9
+      keys:
+        winners_tables|local_winners_table|2|winners
+    third_prize_amount:
+      pos: 103
+      length: 12
+      keys:
+        winners_tables|local_winners_table|3|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 116
+      length: 9
+      keys:
+        winners_tables|local_winners_table|3|winners
+    fourth_prize_amount:
+      pos: 126
+      length: 12
+      keys:
+        winners_tables|local_winners_table|4|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 139
+      length: 9
+      keys:
+        winners_tables|local_winners_table|4|winners
+    fifth_prize_amount:
+      pos: 149
+      length: 12
+      keys:
+        winners_tables|local_winners_table|5|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 162
+      length: 9
+      keys:
+        winners_tables|local_winners_table|5|winners
+    sixth_prize_amount:
+      pos: 172
+      length: 12
+      keys:
+        winners_tables|local_winners_table|6|amount
+      number_format: TRUE
+    sixth_prize_winners:
+      pos: 185
+      length: 9
+      keys:
+        winners_tables|local_winners_table|6|winners
+    seventh_prize_amount:
+      pos: 195
+      length: 12
+      keys:
+        winners_tables|local_winners_table|7|amount
+      number_format: TRUE
+    seventh_prize_winners:
+      pos: 208
+      length: 9
+      keys:
+        winners_tables|local_winners_table|7|winners
+    eighth_prize_amount:
+      pos: 218
+      length: 12
+      keys:
+        winners_tables|local_winners_table|8|amount
+      number_format: TRUE
+    eighth_prize_winners:
+      pos: 231
+      length: 9
+      keys:
+        winners_tables|local_winners_table|8|winners
+    ninth_prize_amount:
+      pos: 241
+      length: 12
+      keys:
+        winners_tables|local_winners_table|9|amount
+      number_format: TRUE
+    ninth_prize_winners:
+      pos: 254
+      length: 9
+      keys:
+        winners_tables|local_winners_table|9|winners
+- name: "First prize winners location"
+  record_type: "winning_location"
+  winners_table: "local_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "county"
+    retailer_name:
+      pos: 28
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "retailer"
+    retailer_address:
+      pos: 59
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "street"
+    retailer_city:
+      pos: 90
+      length: 18
+      cobol_code: "X(18)"
+      schema_field: "city"
+    ticket_type:
+      pos: 109
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Second prize winners location"
+  record_type: "winning_location"
+  winners_table: "local_winners_table"
+  delta: 2
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "county"
+    retailer_name:
+      pos: 28
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "retailer"
+    retailer_address:
+      pos: 59
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "street"
+    retailer_city:
+      pos: 90
+      length: 18
+      cobol_code: "X(18)"
+      schema_field: "city"
+    ticket_type:
+      pos: 109
+      length: 25
+      cobol_code: "X(25)"

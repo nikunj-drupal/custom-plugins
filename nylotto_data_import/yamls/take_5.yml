@@ -1,0 +1,125 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+      keys:
+        draw_date
+    first_prize_amount:
+      pos: 13
+      length: 12
+    first_prize_winners:
+      pos: 26
+      length: 9
+    low_tier_winners:
+      pos: 36
+      length: 9
+    cash_winners:
+      pos: 46
+      length: 9
+      keys:
+        winners
+    first_prize_amount:
+      pos: 56
+      length: 12
+      keys:
+        winners_tables|jackpot_winners_table|1|amount
+      number_format: TRUE
+    first_prize_winners:
+      pos: 69
+      length: 9
+      keys:
+        winners_tables|jackpot_winners_table|1|winners
+    second_prize_amount:
+      pos: 79
+      length: 12
+      keys:
+        winners_tables|jackpot_winners_table|2|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 92
+      length: 9
+      keys:
+        winners_tables|jackpot_winners_table|2|winners
+    third_prize_amount:
+      pos: 102
+      length: 12
+      keys:
+        winners_tables|jackpot_winners_table|3|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 115
+      length: 9
+      keys:
+        winners_tables|jackpot_winners_table|3|winners
+    fourth_prize_winners:
+      pos: 125
+      length: 9
+      keys:
+        winners_tables|jackpot_winners_table|4|winners
+- name: "First prize winner location"
+  record_type: "winning_location"
+  winners_table: "jackpot_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    winning_county:
+      pos: 2
+      length: 25
+      schema_field: "county"
+    retailer_name:
+      pos: 28
+      length: 30
+      schema_field: "retailer"
+    retailer_address:
+      pos: 59
+      length: 30
+      schema_field: "street"
+    retailer_city:
+      pos: 90
+      length: 18
+      schema_field: "city"
+    ticket_type:
+      pos: 109
+      length: 25
+      schema_field: "quickpick"
+- name: "Promotion drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    promo_ball:
+      pos: 2
+      length: 2
+      keys:
+        bonus
+    fifth_prize_amount:
+      pos: 5
+      length: 12
+    fifth_prize_winners:
+      pos: 18
+      length: 9
+    sixth_prize_amount:
+      pos: 28
+      length: 12
+    sixth_prize_winners:
+      pos: 41
+      length: 9
+    seventh_prize_amount:
+      pos: 51
+      length: 12
+    seventh_prize_winners:
+      pos: 64
+      length: 9
+    eighth_prize_winners:
+      pos: 74
+      length: 9

@@ -1,0 +1,45 @@
+nylotto_data.import:
+  title: NYLotto Data Import
+  route_name: nylotto_data.manual_import
+  parent: system.admin_content
+  description: 'Allows manually importing data.'
+
+nylotto_data.manual_import:
+  title: Manual Data Import
+  route_name: nylotto_data.manual_import
+  parent: nylotto_data.import
+  description: 'Allows manually importing data.'
+
+nylotto_data.ftp_settings:
+  title: Private Key Settings
+  route_name: nylotto_data.ftp_settings
+  parent: nylotto_data.import
+  description: 'Allows setting the SSH key for ftp connection.'
+
+nylotto_data_import.import_cron:
+  title: 'Cron Configuration'
+  parent: nylotto_data.import
+  route_name: nylotto_data.enable_import
+  weight: 100
+
+# FTP Source menu items definition
+entity.import_ftp_source.collection:
+  title: 'FTP Source'
+  route_name: entity.import_ftp_source.collection
+  description: 'List FTP Source (bundles)'
+  parent: nylotto_data.import
+  weight: 99
+
+entity.data_config.collection:
+  title: 'Data Import Config'
+  route_name: nylotto_data.import_config
+  description: 'Data Import Configuration'
+  parent: nylotto_data.import
+  weight: 99
+
+entity.historical_data_import.collection:
+  title: 'Historical Data Import'
+  route_name: nylotto_data.historical_import
+  description: 'Historical Data Import Configuration'
+  parent: nylotto_data.import
+  weight: 99

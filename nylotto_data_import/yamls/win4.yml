@@ -1,0 +1,130 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    draw_date:
+      pos: 0
+      length: 10
+      description: "Draw date (YYYY-MM-DD)"
+      cobol_code: "X(10)"
+      keys:
+        draw_date
+    number_of_winners:
+      pos: 11
+      length: 9
+      description: "Number of winners"
+      cobol_code: "9(9)"
+      keys:
+        winners
+    prizes_won:
+      pos: 21
+      length: 9
+      description: "Prizes won"
+      cobol_code: "9(9)"
+      keys:
+        jackpot
+    winning_numbers:
+      pos: 31
+      length: 4
+      keys:
+        winning_numbers
+    straight_play_winners:
+      pos: 36
+      length: 9
+      description: "Stright play winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|straight_play_winners_table|1|winners
+    box_play_winners:
+      pos: 46
+      length: 9
+      descrption: "Box play winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|box_play_winners_table|1|winners
+    front_pair_winners:
+      pos: 56
+      length: 9
+      description: "Front pair winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|pair_plays_winners_table|1|winners
+    back_pair_winners:
+      pos: 66
+      length: 9
+      description: "Back pair winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|pair_plays_winners_table|2|winners
+    straight_box_exact_winners:
+      pos: 76
+      length: 9
+      description: "Straight/box exact winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|straight_box_winners_table|1|winners
+    straight_box_box_winners:
+      pos: 86
+      length: 9
+      description: "Straight/box box winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|straight_box_winners_table|2|winners
+    combination_winners:
+      pos: 96
+      length: 9
+      description: "Combination winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|combination_winners_table|1|winners
+    lucky_sum_winners:
+      pos: 109
+      length: 9
+      description: "Lucky sum winners"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|lucky_sum_winners_table|1|winners
+    lucky_sum_prize_amount:
+      pos: 119
+      length: 6
+      description: "Lucky sum prize amount"
+      cobol_code: "9(4).99"
+      keys:
+        winners_tables|lucky_sum_winners_table|1|amount
+      number_format: TRUE
+    close_enough_four:
+      pos: 127
+      length: 9
+      description: "Close enough four digits off"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|close_enough_winners_table|5|winners
+    close_enough_three:
+      pos: 137
+      length: 9
+      description: "Close enough three digits off"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|close_enough_winners_table|4|winners
+    close_enough_two:
+      pos: 147
+      length: 9
+      description: "Close enough two digits off"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|close_enough_winners_table|3|winners
+    close_enough_one:
+      pos: 147
+      length: 9
+      description: "Close enough two digits off"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|close_enough_winners_table|2|winners
+    close_enough_match:
+      pos: 167
+      length: 9
+      description: "Close enough straight match"
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|close_enough_winners_table|1|winners

@@ -1,0 +1,132 @@
+nylotto_data.manual_import:
+  path: '/admin/content/data'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\ManualImport'
+    _title: 'Payout File Manual Import'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.import_config:
+  path: '/admin/content/data/configuration'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\ImportConfig'
+    _title: 'Data Import Config'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.enable_import:
+  path: '/admin/content/import/configuration'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\ImportSettingsForm'
+    _title: 'Importer Cron Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.clean_import:
+  path: '/admin/content/data/clean'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\CleanImports'
+    _title: 'Clean Payout Imports'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.historical_import:
+  path: '/admin/content/data/historical'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\HistoricalImports'
+    _title: 'Historical Data Imports'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.ftp_settings:
+  path: '/admin/content/data/settings'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\FTPKeySettings'
+    _title: 'Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data.quickdraw_fix:
+  path: '/admin/content/data/quickdraw-fix'
+  defaults:
+    _form: '\Drupal\nylotto_data_import\Form\QuickDrawFix'
+    _title: 'Quick Draw Fix'
+  requirements:
+    _permission: 'administer site configuration'
+
+# FTP Configuration Entity
+entity.import_source.collection:
+  path: '/admin/content/data/source'
+  defaults:
+    _entity_list: 'import_source'
+    _title: 'Import Source'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.import_source.add_form:
+  path: '/admin/content/data/source/add'
+  defaults:
+    _entity_form: 'import_source.add'
+    _title: 'Add Import Source'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.import_source.edit_form:
+  path: '/admin/content/data/source/{import_source}'
+  defaults:
+    _entity_form: 'import_source.add'
+    _title: 'Add Import Source'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.import_source.delete_form:
+  path: '/admin/content/data/source/{import_source}/delete'
+  defaults:
+    _entity_form: 'import_source.delete'
+    _title: 'Delete'
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data_import.ftp_test:
+  path: '/admin/ftp_test'
+  defaults:
+    _controller: '\Drupal\nylotto_data_import\Controller\DataImport:ftpTest'
+  requirements:
+    _permission : 'administer site configuration'
+
+nylotto_data_import.drawing_data_list:
+  path: '/node/{node}/payment_verification'
+  defaults:
+    _controller: '\Drupal\nylotto_data_import\Controller\DataImport::payment_verification_list'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data_import.drawing_data:
+  path: '/node/{node}/payment_verification/{paragraph}'
+  defaults:
+    _controller: '\Drupal\nylotto_data_import\Controller\DataImport::payment_verification'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      paragraph:
+        type: entity:paragraph
+  requirements:
+    _permission: 'administer site configuration'
+
+nylotto_data_import.drawing_data_delete:
+  path: '/node/{node}/payment_verification/{paragraph}/delete'
+  defaults:
+    _controller: '\Drupal\nylotto_data_import\Controller\DataImport::payment_verification_delete'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      paragraph:
+        type: entity:paragraph
+  requirements:
+    _permission: 'administer site configuration'

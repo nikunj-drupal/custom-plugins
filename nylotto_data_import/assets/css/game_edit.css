@@ -1,0 +1,11 @@
+.paragraph-type--winners-data .field--name-field-prize-label,
+.paragraph-type--winners-data .field--name-field-prize-winners,
+.paragraph-type--winners-data .field--name-field-prize-amount {
+    float:left;
+    width:20%;
+    margin-right:5%;
+}
+
+.paragraph-type--winners-data .paragraph-type-label {
+  display: none !important;
+}

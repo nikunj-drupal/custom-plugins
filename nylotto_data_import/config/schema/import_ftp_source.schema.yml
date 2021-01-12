@@ -1,0 +1,33 @@
+nylotto_data_import.import_ftp_source.*:
+  type: config_entity
+  label: 'FTP Source config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    server:
+      type: string
+      label: 'Server'
+    port:
+      type: string
+      label: 'Port'
+    path:
+      type: string
+      label: 'Path'
+    user:
+      type: string
+      label: 'User'
+    password:
+      type: string
+      label: 'Password'
+    cron_type:
+      type: string
+      label: 'Cron Type'
+    import_schedule:
+      type: string
+      label: 'Import Schedule'

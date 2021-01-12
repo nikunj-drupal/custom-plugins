@@ -1,0 +1,9 @@
+edit_behaviors.games:
+  js:
+    assets/js/game_edit.behavior.js: {}
+  css:
+    theme:
+      assets/css/game_edit.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once

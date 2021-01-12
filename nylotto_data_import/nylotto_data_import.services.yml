@@ -1,0 +1,11 @@
+services:
+  nylotto.data:
+    class: Drupal\nylotto_data_import\ImportData
+    arguments: ['@plugin.manager.lotto_data']
+    
+  plugin.manager.lotto_data:
+    class: Drupal\nylotto_data_import\DataImportManager
+    parent: default_plugin_manager
+
+  nylotto.historical_data:
+    class: Drupal\nylotto_data_import\HistoricalData

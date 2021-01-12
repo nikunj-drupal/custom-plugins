@@ -1,0 +1,20 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    draw_date:
+      pos: 0
+      length: 10
+      keys:
+        draw_date
+    winners:
+      pos: 11
+      length: 9
+      keys:
+        winners
+    prizes_won:
+      pos: 21
+      length: 9
+      keys:
+        jackpot

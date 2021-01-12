@@ -1,0 +1,379 @@
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+      keys:
+        draw_date
+    jackpot_winners:
+      pos: 13
+      length: 9
+      keys:
+        winners_tables|national_winners_table|1|winners
+    jackpot:
+      pos: 23
+      length: 9
+      keys:
+        winners_tables|national_winners_table|1|amount
+    winning_numbers:
+      pos: 33
+      length: 14
+      keys:
+        winning_numbers
+    powerball:
+      pos: 48
+      length: 2
+      keys:
+        bonus
+    power_play:
+      pos: 51
+      length: 2
+      keys:
+        multiplier
+    first_prize_amount:
+      pos: 54
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|1|amount
+      number_format: TRUE
+    first_prize_winners:
+      pos: 67
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|1|winners
+    second_prize_amount:
+      pos: 77
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|2|amount
+        winners_tables|national_winners_table|2|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 90
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|2|winners
+    third_prize_amount:
+      pos: 100
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|3|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 113
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|3|winners
+    fourth_prize_amount:
+      pos: 123
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|4|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 136
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|4|winners
+    fifth_prize_amount:
+      pos: 146
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|5|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 159
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|5|winners
+    sixth_prize_amount:
+      pos: 169
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|6|amount
+      number_format: TRUE
+    sixth_prize_winners:
+      pos: 182
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|6|winners
+    seventh_prize_amount:
+      pos: 192
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|7|amount
+      number_format: TRUE
+    seventh_prize_winners:
+      pos: 205
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|7|winners
+    eighth_prize_amount:
+      pos: 215
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|8|amount
+      number_format: TRUE
+    eighth_prize_winners:
+      pos: 228
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|8|winners
+    ninth_prize_amount:
+      pos: 238
+      length: 12
+      keys:
+        winners_tables|local_powerball_winners_table|9|amount
+      number_format: TRUE
+    ninth_prize_winners:
+      pos: 251
+      length: 9
+      keys:
+        winners_tables|local_powerball_winners_table|9|winners
+- name: "Power play drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+    second_prize_amount:
+      pos: 13
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|1|amount
+        winners_tables|national_powerplay_winners_table|2|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 26
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|1|winners
+    third_prize_amount:
+      pos: 36
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|2|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 49
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|2|winners
+    fourth_prize_amount:
+      pos: 59
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|3|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 72
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|3|winners
+    fifth_prize_amount:
+      pos: 82
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|4|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 95
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|4|winners
+    sixth_prize_amount:
+      pos: 105
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|5|amount
+      number_format: TRUE
+    sixth_prize_winners:
+      pos: 118
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|5|winners
+    seventh_prize_amount:
+      pos: 128
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|6|amount
+      number_format: TRUE
+    seventh_prize_winners:
+      pos: 141
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|6|winners
+    eighth_prize_amount:
+      pos: 151
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|7|amount
+      number_format: TRUE
+    eighth_prize_winners:
+      pos: 164
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|7|winners
+    ninth_prize_amount:
+      pos: 174
+      length: 12
+      keys:
+        winners_tables|local_powerplay_winners_table|8|amount
+      number_format: TRUE
+    ninth_prize_winners:
+      pos: 187
+      length: 9
+      keys:
+        winners_tables|local_powerplay_winners_table|8|winners
+- name: "Powerball first prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_powerball_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 1
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 1
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 1
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 1
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Powerball second prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_powerball_winners_table"
+  delta: 2
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 1
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 1
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 1
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 1
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Powerplay second prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_powerplay_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 1
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 1
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 1
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 1
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"

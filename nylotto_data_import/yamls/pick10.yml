@@ -1,0 +1,52 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    draw_date:
+      pos: 0
+      length: 10
+      description: "Draw date (YYYY-MM-DD)"
+      cobol_code: "X(10)"
+      keys:
+        draw_date
+    number_of_winners:
+      pos: 11
+      length: 9
+      keys:
+        winners
+    prizes_won:
+      pos: 21
+      length: 9
+      keys:
+        jackpot
+    ten:
+      pos: 31
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|1|winners
+    nine:
+      pos: 41
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|2|winners
+    eight:
+      pos: 51
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|3|winners
+    seven:
+      pos: 61
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|4|winners
+    six:
+      pos: 71
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|5|winners
+    none:
+      pos: 81
+      length: 9
+      keys:
+        winners_tables|regular_winners_table|6|winners

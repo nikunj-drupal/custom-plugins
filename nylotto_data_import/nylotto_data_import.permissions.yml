@@ -1,0 +1,7 @@
+manage payout verification:
+  description: 'Allows an editor to access the retailer verification section.'
+  title: 'Manage Payout Verification'
+
+manage retailer verification:
+  description: 'Allows an editor to access the retailer verification section.'
+  title: 'Manage Retailer Verification'

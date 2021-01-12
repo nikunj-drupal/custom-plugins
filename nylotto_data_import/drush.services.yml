@@ -1,0 +1,5 @@
+services:
+  nylotto_data_import.commands:
+    class: \Drupal\nylotto_data_import\Commands\NylDataImportCommands
+    tags:
+      - { name: drush.command }

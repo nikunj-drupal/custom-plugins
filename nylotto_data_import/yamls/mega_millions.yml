@@ -1,0 +1,371 @@
+---
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+      keys:
+        draw_date
+    jackpot_winners:
+      pos: 13
+      length: 9
+      keys:
+        winners_tables|national_winners_table|1|winners
+      number_format: TRUE
+    jackpot_amount:
+      pos: 23
+      length: 9
+      keys:
+        winners_tables|national_winners_table|1|amount
+      number_format: TRUE
+    winning_numbers:
+      pos: 33
+      length: 14
+      keys:
+        winning_numbers
+    megaball:
+      pos: 48
+      length: 2
+      keys:
+        bonus
+    first_prize_amount:
+      pos: 51
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|1|amount
+      number_format: TRUE
+    first_prize_winners:
+      pos: 61
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|1|winners
+      number_format: TRUE
+    second_prize_amount:
+      pos: 71
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|2|amount
+        winners_tables|national_winners_table|2|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 84
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|2|winners
+        winners_tables|national_winners_table|2|winners
+      number_format: TRUE
+    third_prize_amount:
+      pos: 94
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|3|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 107
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|3|winners
+      number_format: TRUE
+    fourth_prize_amount:
+      pos: 117
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|4|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 130
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|4|winners
+      number_format: TRUE
+    fifth_prize_amount:
+      pos: 140
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|5|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 153
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|5|winners
+      number_format: TRUE
+    sixth_prize_amount:
+      pos: 163
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|6|amount
+      number_format: TRUE
+    sixth_prize_winners:
+      pos: 176
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|6|winners
+      number_format: TRUE
+    seventh_prize_amount:
+      pos: 186
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|7|amount
+      number_format: TRUE
+    seventh_prize_winners:
+      pos: 199
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|7|winners
+      number_format: TRUE
+    eighth_prize_amount:
+      pos: 209
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|8|amount
+      number_format: TRUE
+    eighth_prize_winners:
+      pos: 222
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|8|winners
+      number_format: TRUE
+    ninth_prize_amount:
+      pos: 232
+      length: 12
+      keys:
+        winners_tables|local_megamillions_winners_table|9|amount
+      number_format: TRUE
+    ninth_prize_winners:
+      pos: 245
+      length: 9
+      keys:
+        winners_tables|local_megamillions_winners_table|9|winners
+      number_format: TRUE
+    megaplier:
+      pos: 255
+      length: 2
+      keys:
+        multiplier
+- name: "First prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_megamillions_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "county"
+    retailer_name:
+      pos: 28
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "retailer"
+    retailer_address:
+      pos: 59
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "street"
+    retailer_city:
+      pos: 90
+      length: 18
+      cobol_code: "X(18)"
+      schema_field: "city"
+    ticket_type:
+      pos: 109
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Second prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_megamillions_winners_table"
+  delta: 2
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "county"
+    retailer_name:
+      pos: 28
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "retailer"
+    retailer_address:
+      pos: 59
+      length: 30
+      cobol_code: "X(30)"
+      schema_field: "street"
+    retailer_city:
+      pos: 90
+      length: 18
+      cobol_code: "X(18)"
+      schema_field: "city"
+    ticket_type:
+      pos: 109
+      length: 25
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Mega millions megaplier winners"
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+    draw_date:
+      pos: 2
+      length: 10
+    second_prize_amount:
+      pos: 13
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|1|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 26
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|1|winners
+      number_format: TRUE
+    third_prize_amount:
+      pos: 36
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|2|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 49
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|2|winners
+      number_format: TRUE
+    fourth_prize_amount:
+      pos: 59
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|3|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 72
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|3|winners
+      number_format: TRUE
+    fifth_prize_amount:
+      pos: 82
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|4|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 95
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|4|winners
+      number_format: TRUE
+    sixth_prize_amount:
+      pos: 105
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|5|amount
+      number_format: TRUE
+    sixth_prize_winners:
+      pos: 118
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|5|winners
+      number_format: TRUE
+    seventh_prize_amount:
+      pos: 128
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|6|amount
+      number_format: TRUE
+    seventh_prize_winners:
+      pos: 141
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|6|winners
+      number_format: TRUE
+    eighth_prize_amount:
+      pos: 151
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|7|amount
+      number_format: TRUE
+    eighth_prize_winners:
+      pos: 164
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|7|winners
+      number_format: TRUE
+    ninth_prize_amount:
+      pos: 174
+      length: 12
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|8|amount
+      number_format: TRUE
+    ninth_prize_winners:
+      pos: 187
+      length: 9
+      keys:
+        winners_tables|local_megamillions_megaplier_winners_table|8|winners
+      number_format: TRUE
+- name: "Megaplier second prize winner location"
+  record_type: "winning_location"
+  winners_table: "local_megamillions_megaplier_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 1
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 1
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 1
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 1
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"

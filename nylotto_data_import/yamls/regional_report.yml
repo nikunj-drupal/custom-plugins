@@ -1,0 +1,104 @@
+record_types:
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    location:
+      pos: 0
+      length: 1
+      cobol_code: "X"
+      description: "Location."
+    week_start_date:
+      pos: 2
+      length: 10
+      cobol_code: "X(10)"
+      description: "Week start date (YYYY-MM-DD)."
+    week_end_date:
+      pos: 13
+      length: 10
+      cobol_code: "X(10)"
+      description: "Week end date (YYYY-MM-DD)."
+    prizes_won:
+      pos: 24
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Prizes Won."
+    lotto_prizes_won:
+      pos: 37
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Lotto Prizes Won."
+    numbers_prizes_won:
+      pos: 50
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Numbers Prizes Won."
+    win4_prizes_won:
+      pos: 63
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Win4 Prizes Won."
+    pick_10_prizes_won:
+      pos: 76
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Pick 10 Prizes Won."
+    take_five_prizes_won:
+      pos: 89
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Take Five Prizes Won."
+    quick_draw_prizes_won:
+      pos: 102
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Quick Draw Prizes Won."
+    instants_prizes_won:
+      pos: 115
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Instants Prizes Won."
+    mega_millions_prizes_won:
+      pos: 128
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Mega Millions Prizes Won."
+    sweet_million_prizes_won:
+      pos: 141
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Sweet Million Prizes Won."
+    powerball_prizes_won:
+      pos: 154
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Powerball Prizes Won."
+    cash_4_life_prizes_won:
+      pos: 167
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Cash 4 Life Prizes Won."
+    monopoly_millionaires_clud_prizes_won:
+      pos: 180
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Monopoly Millionaire's Club Prizes Won."
+    top_instant_game:
+      pos: 193
+      length: 30
+      cobol_code: "X(30)"
+      description: "Top Instant Game."
+    second_instant_game:
+      pos: 224
+      length: 30
+      cobol_code: X(30)
+      description: "2nd Instant Game."
+    third_instant_game:
+      pos: 255
+      length : 30
+      cobol_code: "X(30)"
+      description: "3rd Instant Game."
+    earned_for_education:
+      pos: 286
+      length: 12
+      cobol_code: "9(9).99"
+      description: "Earned for education."

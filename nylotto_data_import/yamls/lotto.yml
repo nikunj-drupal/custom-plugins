@@ -1,0 +1,218 @@
+---
+# File schema description for Lotto game
+record_types:
+- name: "Drawing"
+  # One of 'drawing' or 'winning_location'
+  record_type: "drawing"
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "Record type e.g. 0 = drawing, 1 = first prize winners, etc"
+      cobol_code: "X"
+    draw_date:
+      pos: 2
+      length: 10
+      description: "Date of drawing in format YYYY-MM-DD"
+      cobol_code: "X(10)"
+      keys:
+        draw_date
+    jackpot_winners:
+      pos: 13
+      length: 9
+      description: "The number of jackpot winners."
+      cobol_code: "9(9)"
+      keys:
+        winners
+    jackpot:
+      pos: 23
+      length: 9
+      description: "The jackpot amount"
+      cobol_code: "9(9)"
+      keys:
+        jackpot
+    winning_numbers:
+      pos: 33
+      length: 17
+      description: "The winning numbers in 2 digit pairs separated by a pipe (|)."
+      cobol_code: "X(20)"
+      keys:
+        winning_numbers
+    bonus:
+      pos: 51
+      length: 2
+      description: "The bonus number for this drawing."
+      keys:
+        bonus
+    first_prize:
+      pos: 54
+      length: 9
+      description: "First prize amount."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|1|amount
+      number_format: TRUE
+    first_prize_winners:
+      pos: 64
+      length: 9
+      description: "Number of first prize winners."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|1|winners
+    second_prize:
+      pos: 74
+      length: 12
+      description: "Second prize amount."
+      cobol_code: "9(9).99"
+      keys:
+        winners_tables|jackpot_winners_table|2|amount
+        winners_tables|national_winners_table|2|amount
+      number_format: TRUE
+    second_prize_winners:
+      pos: 87
+      length: 9
+      description: "Number of second prize winners."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|2|winners
+    third_prize:
+      pos: 97
+      length: 12
+      description: "Third prize amount."
+      cobol_code: "9(9).99"
+      keys:
+        winners_tables|jackpot_winners_table|3|amount
+      number_format: TRUE
+    third_prize_winners:
+      pos: 110
+      length: 9
+      description: "Number of third prize winners."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|3|winners
+    fourth_prize:
+      pos: 120
+      length: 12
+      description: "Fourth prize amount."
+      cobol_code: "9(9).99"
+      keys:
+        winners_tables|jackpot_winners_table|4|amount
+      number_format: TRUE
+    fourth_prize_winners:
+      pos: 133
+      length: 9
+      description: "Number of fourth prize winners."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|4|winners
+    fifth_prize:
+      pos: 143
+      length: 12
+      description: "Fifth prize amount."
+      cobol_code: "9(9).99"
+      keys:
+        winners_tables|jackpot_winners_table|5|amount
+      number_format: TRUE
+    fifth_prize_winners:
+      pos: 156
+      length: 9
+      description: "Number of fifth prize winners."
+      cobol_code: "9(9)"
+      keys:
+        winners_tables|jackpot_winners_table|5|winners
+- name: "First prize winner location"
+  record_type: "winning_location"
+  winners_table: "jackpot_winners_table"
+  delta: 1
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 1
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 1
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 1
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 1
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"
+- name: "Second prize winner location"
+  record_type: "winning_location"
+  winners_table: "jackpot_winners_table"
+  delta: 2
+  fields:
+    record_indicator:
+      pos: 0
+      length: 1
+      description: "The record type."
+      cobol_code: "X"
+    winning_county:
+      pos: 2
+      length: 25
+      description: "Winning county."
+      cobol_code: "X(25)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "county"
+      delta: 2
+    retailer_name:
+      pos: 28
+      length: 30
+      description: "Retailer name."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "retailer"
+      delta: 2
+    retailer_address:
+      pos: 59
+      length: 30
+      description: "Retailer street address."
+      cobol_code: "X(30)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "street"
+      delta: 2
+    retailer_city:
+      pos: 90
+      length: 18
+      description: "Retailer city."
+      cobol_code: "X(18)"
+      winners_table: "jackpot_winners_table"
+      schema_field: "city"
+      delta: 2
+    ticket_type:
+      pos: 109
+      length: 25
+      description: "Ticket type e.g. Regular."
+      cobol_code: "X(25)"
+      schema_field: "quickpick"

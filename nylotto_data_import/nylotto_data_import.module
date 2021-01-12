@@ -1,0 +1,634 @@
+<?php
+
+/**
+ * @file
+ * Module guzzle here.
+ */
+
+use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\nylotto_drawing\Entity\Drawing;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_cron().
+ *
+ * Queues news feeds for import games & Retailers.
+ */
+function nylotto_data_import_cron() {
+
+  //Get config values.
+  $cron_config = \Drupal::config('nylotto_data_import_cron_config.settings');
+
+  $ftp_download = $cron_config->get('ftp_download');
+  $retailer_import = $cron_config->get('retailer_import');
+  $api_import = $cron_config->get('api_import');
+
+  //Get configuration
+  $cron_on_api_checkbox = $cron_config->get('cron_on_api_checkbox');
+  $cron_on_api_time = $cron_config->get('cron_on_api_time');
+  $cron_on_ftp_checkbox = $cron_config->get('cron_on_ftp_checkbox');
+  $cron_on_ftp_time = $cron_config->get('cron_on_ftp_time');
+  $cron_on_retailor_checkbox = $cron_config->get('cron_on_retailor_checkbox');
+  $cron_on_retailor_time = $cron_config->get('cron_on_retailor_time');
+
+  //Current time.
+  $current_time = date("Y-m-d H:i:s");
+  $current = date("H:i:s");
+
+
+  //API import check.
+  if ($cron_on_api_checkbox == 1) {
+    $cron_on_api_get = \Drupal::state()->get('cron_on_api');  
+    $new_cron_on_api = date('Y-m-d H:i:s',strtotime($cron_on_api_time,strtotime($cron_on_api_get)));
+    if (empty($cron_on_api_get)) {
+      if ($api_import == 1) {
+        \Drupal::state()->set('cron_on_api',date("Y-m-d H:i:s"));
+        nylotto_api_draw_game_update_cron();
+      }
+    }
+    if ($api_import == 1 && $current_time > $new_cron_on_api) {
+      \Drupal::state()->set('cron_on_api',date("Y-m-d H:i:s"));
+      nylotto_api_draw_game_update_cron();
+    }
+  }else{
+    $cron_time = date("H:i:s", strtotime($cron_on_api_time));
+    $check_time = date("H:i:s", strtotime("+5 minutes", strtotime($cron_on_api_time)));
+    if ($api_import == 1 && $current > $cron_time && $current < $check_time) {
+      nylotto_api_draw_game_update_cron();
+    }
+  }
+
+  //FTP import check.
+  if ($cron_on_ftp_checkbox == 1) {
+    $cron_on_ftp_get = \Drupal::state()->get('cron_on_ftp'); 
+    $new_cron_on_ftp = date('Y-m-d H:i:s',strtotime($cron_on_ftp_time,strtotime($cron_on_ftp_get)));
+    if (empty($cron_on_ftp_get) && $ftp_download == 1) {
+      \Drupal::state()->set('cron_on_ftp',date("Y-m-d H:i:s"));
+      nylotto_ftp_download_cron();
+    }
+    if ($ftp_download == 1 && $current_time > $new_cron_on_ftp) {
+      \Drupal::state()->set('cron_ocron_on_ftpn_api',date("Y-m-d H:i:s"));
+      nylotto_ftp_download_cron();
+    }
+  }else{
+    $cron_time = date("H:i:s", strtotime($cron_on_ftp_time));
+    $check_time = date("H:i:s", strtotime("+5 minutes", strtotime($cron_on_ftp_time)));
+    if ($ftp_download == 1 && $current > $cron_time && $current < $check_time) {
+      nylotto_ftp_download_cron();
+    }
+  }
+
+  //Retailer import check.
+  if ($cron_on_retailor_checkbox == 1) {
+    $cron_on_retailor_get = \Drupal::state()->get('cron_on_retailor'); 
+    $new_cron_on_retailor = date('Y-m-d H:i:s',strtotime($cron_on_retailor_time,strtotime($cron_on_retailor_get)));
+    if (empty($cron_on_retailor_get) && $retailer_import == 1) {
+      \Drupal::state()->set('cron_on_retailor',date("Y-m-d H:i:s"));
+      nylotto_data_import_retailer_cron();
+    }
+    if ($retailer_import == 1 && $current_time > $new_cron_on_retailor) {
+      \Drupal::state()->set('cron_on_retailor',date("Y-m-d H:i:s"));
+      nylotto_data_import_retailer_cron();
+    }
+  }else{
+    $cron_time = date("H:i:s", strtotime($cron_on_retailor_time));
+    $check_time = date("H:i:s", strtotime("+5 minutes", strtotime($cron_on_retailor_time)));
+    if ($ftp_download == 1 && $current > $cron_time && $current < $check_time) {
+      nylotto_data_import_retailer_cron();
+    }
+  }
+}
+
+/**
+ * Cron Task for processing retailers.
+ */
+function nylotto_data_import_retailer_cron() {
+  // Approx a 1 day of interval.
+  $interval = 24 * 60 * 60;
+
+  $next_execution = \Drupal::state()->get('nylotto_data_import.next_execution');
+  $next_execution = !empty($next_execution) ? $next_execution : 0;
+  if (REQUEST_TIME >= $next_execution) {
+    try {
+      \Drupal::state()->set('nylotto_data_import.next_execution', time() + $interval);
+      get_data();
+    }
+    catch (\Exception $e) {
+      watchdog_exception('nylotto_data_import_retailer_cron', $e);
+    }
+  }
+}
+
+/**
+ * Returns the paragraph for drawing data.
+ */
+function getDrawingDataParagraph($nid, $date, $time = '') {
+
+  // Check for a drawing data paragraph for this node.
+  $query = \Drupal::entityQuery('paragraph')
+    ->condition('type', 'drawing_data')
+    ->condition('field_draw_date', $date)
+    ->condition('parent_id', $nid)
+    ->condition('parent_type', 'node');
+
+  if ($time !== '') {
+    $query->condition('field_draw_time', $time);
+  }
+  $pids = $query->execute();
+  if (count($pids) > 0) {
+    return entity_load('paragraph', array_shift($pids));
+  }
+  else {
+    // Loop through the node and try to find it via field api.
+    $node = entity_load('node', $nid);
+    foreach ($node->field_drawing_data->referencedEntities() as $paragraph) {
+      $targetDate = new \DateTime();
+      $targetDate->setTimeStamp($paragraph->field_draw_date->value);
+      if ($targetDate->format('Y-m-d') == $date) {
+        if (($time !== '' && $time == $paragraph->field_draw_time->value) || $time == '') {
+          return $paragraph;
+        }
+      }
+    }
+  }
+  return FALSE;
+
+}
+
+/**
+ * Update Drawing Data Paragraph plugin.
+ */
+function updateDrawingData($node, $drawingEntity, $data) {
+  $drawingEntity->set('field_winning_numbers_txt', $data['winningNumbers']);
+  $drawingEntity->set('field_bonus_ball', $data['bonus']);
+  $drawingEntity->set('field_multiplier', $data['multiplier']);
+  $drawingEntity->set('field_draw_date', $data['date']);
+  $drawingEntity->set('field_draw_number', $data['drawNumber']);
+  $drawingEntity->set('field_draw_time', $data['time']);
+  $drawingEntity->save();
+
+  $node->save();
+
+  return $drawingEntity;
+}
+
+/**
+ * Create Drawing Data Paragraph plugin.
+ */
+function createDrawingData($node, $data) {
+  $entity = Drawing::create([
+    'type' => 'drawing_data',
+    'field_draw_date' => $data['date'],
+    'field_draw_time' => $data['time'],
+    'field_winning_numbers_txt' => $data['winningNumbers'],
+    'field_multiplier' => $data['multiplier'],
+    'field_draw_number' => $data['drawNumber'],
+    'field_bonus_ball' => $data['bonus'],
+    'game' => [['target_id' => $node->id()]],
+  ]);
+  $entity->save();
+  return $entity;
+}
+
+/**
+ * Generate an array of objects from RestApi.
+ *
+ * @return array|bool
+ *   Return an array or false
+ */
+function getGamesData($gameName) {
+  $headers = [
+    'headers' => [
+      'x-api-key' => 'kAA3paUZQQvebd0Fws6e44s4FQ2vbGc74piJfJC2',
+    ],
+  ];
+  $url = 'https://api.nylservices.net/games/' . $gameName . '/draws';
+  $client = \Drupal::httpClient();
+  try {
+    $request = $client->get($url, $headers);
+    $contentsData = $request->getBody()->getContents();
+    $gamesData = json_decode($contentsData, TRUE);
+    return $gamesData;
+  }
+  catch (RequestException $e) {
+    watchdog_exception('nylotto_api_draw_game_update', $e);
+    return FALSE;
+  }
+  exit;
+}
+
+/**
+ * Cron Task for processing API to update Draw Game.
+ */
+function nylotto_api_draw_game_update_cron() {
+  // Update draw gmames, based on check NYL API field.
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', 'game')
+    ->condition('field_check_nyl_api', 1)
+    ->execute();
+  $gamesUpdate = Node::loadMultiple($ids);
+  foreach ($gamesUpdate as $gamekey => $gamevalue) {
+    $gameName = $gamevalue->get('field_game_id')->getString();
+    if (!empty($gameName)) {
+      $gamesData = getGamesData($gameName);
+      if (is_array($gamesData)) {
+        $gamesApi = $gamesData['data'];
+        $drawingData = $gamesApi['draws'];
+        foreach ($drawingData as $drawingKey => $drawingValue) {
+          $gameId = $gamevalue->id();
+          $resultDate = $drawingdate = $drawingtime = '';
+          $resultDate = $drawingValue['resultDate'] / 1000;
+          $winners_numbers = '';
+          if (isset($drawingValue['results'])) {
+            $primary_data = $drawingValue['results'][0]['primary'];
+            if ($gameName == 'quickdraw') {
+              sort($primary_data);
+            }
+            $winners_numbers = implode('|', $primary_data);
+          }
+          $drawingdate = \Drupal::service('date.formatter')->format($resultDate, 'custom', 'Y-m-d');
+          $drawingtime = \Drupal::service('date.formatter')->format($resultDate, 'custom', 'H:i:s');
+          if ($gameName == 'numbers' || $gameName == 'win4') {
+            $drawingtime = '';
+            $time = \Drupal::service('date.formatter')->format($resultDate, 'custom', 'H');
+            if ($time >= 8 && $time <= 13) {
+              $drawingtime = 'Midday';
+            }
+            else {
+              $drawingtime = 'Evening';
+            }
+          }
+          $dataDraw['date'] = $drawingdate;
+          $dataDraw['gameName'] = $gameName;
+          $dataDraw['time'] = $drawingtime;
+          $dataDraw['drawNumber'] = $drawingValue['drawNumber'];
+          $dataDraw['multiplier'] = isset($drawingValue['results'][0]['multiplier']) ? $drawingValue['results'][0]['multiplier'] : '';
+          $dataDraw['winningNumbers'] = $winners_numbers;
+          $dataDraw['bonus'] = isset($drawingValue['results'][0]['secondary'][0]) ? $drawingValue['results'][0]['secondary'][0] : '';
+
+          $includegames = ["win4", "numbers", "quickdraw"];
+          if (!in_array($gameName, $includegames)) {
+            // Check for a drawing data paragraph for this node.
+            $query = \Drupal::entityQuery('drawing')
+              ->condition('game', $gameId)
+              ->condition('field_draw_date', $drawingdate);
+            $pid = $query->execute();
+          }
+          else {
+            // Check for a drawing data paragraph for this node.
+            $query = \Drupal::entityQuery('drawing')
+              ->condition('game', $gameId)
+              ->condition('field_draw_date', $drawingdate)
+              ->condition('field_draw_time', $dataDraw['time']);
+            $pid = $query->execute();
+          }
+          if (empty($pid)) {
+            createDrawingData($gamevalue, $dataDraw);
+          }
+          else {
+            $entity = entity_load('drawing', array_shift($pid));
+            updateDrawingData($gamevalue, $entity, $dataDraw);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Cron task for processing ftp downloads.
+ */
+function nylotto_ftp_download_cron() {
+
+  $sources = entity_load_multiple('import_ftp_source');
+  $service = \Drupal::service('nylotto.data');
+
+  $dayofweek = date('w');
+  $state = \Drupal::state();
+  foreach ($sources as $id => $source) {
+    $parts = explode(' ', $source->import_schedule);
+    if ($parts[1] == $dayofweek || $source->cron_type == 'daily' || TRUE) {
+      if (strtotime($state->get('id')) > strtotime('-20 hours') || TRUE) {
+        $datestring = strtotime(date('m/d/y') . " {$parts[0]}");
+        if ($datestring > strtotime("-30 minutes") || $datestring < strtotime("+1 hour")) {
+          $service->downloadFTPFiles($source);
+          $state->set($id, time());
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Callback function.
+ */
+function get_data() {
+  $data = downloadRetailerData();
+
+  if ($data) {
+    $queueFactory = \Drupal::service('queue');
+    $queue1 = $queueFactory->get('exqueue_import');
+    //$totalItemsBefore = $queue1->numberOfItems();
+    foreach ($data as $element) {
+      $object = parse_row($element);
+      if ($object) {
+        $queue1->createItem($object);
+      }
+    }
+  }
+}
+
+/**
+ * Generate an array of objects from RestApi.
+ *
+ * @return array|bool
+ *   Return an array or false
+ */
+function downloadRetailerData() {
+  $client = \Drupal::httpClient();
+  // 1. Try to get the data form the RestApi.
+  $uri = 'https://api.nylservices.net/retailers/all';
+  try {
+    $response = $client->get($uri, [
+      'headers' => [
+        'x-api-key' => 'kAA3paUZQQvebd0Fws6e44s4FQ2vbGc74piJfJC2',
+      ],
+      [
+        'access-token' => 'eyJraWQiOiI4SXJKaFpycVhXXC9LNXlSTUZJNnorYzk2NURPY3hBZGFHTXBcL2NobkRzeWc9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI0YzFiNTAzNy0wMTQxLTQxMDYtYmRlNC04YjhlOGZhN2I2NDIiLCJldmVudF9pZCI6ImExZGI1OTQyLTQ4MjItNDA2NC05ZjExLTE4ZmY0MmExNmYzNCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE1NjA5ODA2NzIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX1ZRMUJzZjFhbiIsImV4cCI6MTU2MDk4NDI3MiwiaWF0IjoxNTYwOTgwNjcyLCJqdGkiOiI5YTA2MzNlZS0zNmNmLTRmODItYTRlYS1mZGJiNTkyZDg3M2IiLCJjbGllbnRfaWQiOiI1dGQycW02aGE3ZDB1aHFpZmlxbjZzNDlkYyIsInVzZXJuYW1lIjoiNGMxYjUwMzctMDE0MS00MTA2LWJkZTQtOGI4ZThmYTdiNjQyIn0.XEp1ArpVbKFlAYw0mUpfZYUSYhe3QNgoysys72UtF4_QEc105QzZTHoa0YxgiB7RVgdVdBii69FJu6KQGlTmun4xgvQu4xp8fCF4si0EVuBl44sV5RNgrmnkcFvAPPaCHY2eg4MrXs2D6jJ3P3-uHh7cdaMhkle3xVJKpcrzK7o3XmDpOgMW-yz-1wBNPaObI52Ol747wijq_j6Xm2wqQ84LONn0-9XYvENDZ95he4E26vFxuFSL0ELZKTtYpKG9K9dKTI9knjoE_6Mn8E6Ca6jJdoJaBELbSkaGrjIklJgE6LUcYq5aYT3-nkE1enkgjgNJ3fal7HPKQYonpI3YxA',
+      ], [
+        'client-id' => '32hktrve04jqbd8jg677s2fska',
+      ],
+    ]);
+    $raw = $response->getBody();
+    $data = explode("\r\n", $raw);
+    if (empty($data)) {
+      throw new \Exception("Could not get data from Retailer API");
+    }
+    $contents = array_map('str_getcsv', $data);
+    return $contents;
+  }
+  catch (Exception $e) {
+    watchdog_exception('nylotto_data_import', $e);
+  }
+}
+
+/**
+ * Parse the data row and import into drupal.
+ */
+function parse_row($element) {
+  $item = new \stdClass();
+  if (!empty($element[0])) {
+    foreach ($element as $delta => $col) {
+      $element[$delta] = trim($col, "\n");
+    }
+    // Create an object.
+    $item = new \stdClass();
+    $item->internalid = $element[0];
+    $item->name = $element[1];
+    $item->street = $element[2];
+    $item->city = $element[3];
+    $item->state = $element[4];
+    $item->zip = $element[5];
+    $item->isqd = $element[6];
+    $item->latitude = $element[7];
+    $item->longitude = $element[8];
+  }
+
+  return $item;
+}
+
+/**
+ * Implements hook_entity_type_build().
+ */
+function nylotto_data_import_entity_type_build(array &$entity_types) {
+  $entity_types['node']->setFormClass('payout_verification', 'Drupal\node\NodeForm');
+  $entity_types['node']->setFormClass('retailer_verification', 'Drupal\node\NodeForm');
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function nylotto_data_import_entity_form_display_alter(&$form_mode, $context) {
+  if ($context['entity_type'] == 'node' && $context['bundle'] == 'game') {
+    $entity = \Drupal::routeMatch()->getParameter('node');
+    switch ($entity->field_game_type->value) {
+
+      case 'Draw':
+        if ($newDisplay = _getCustomGameFormDisplay($entity, 'draw')) {
+          // $form_mode = $newDisplay;
+        }
+
+        break;
+
+      case 'Scratch Off':
+        $id = "node.game.scratch_off_game";
+        $storage = \Drupal::entityManager()->getStorage('entity_form_display');
+        $form_mode = $storage->load($id);
+
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+/**
+ * Returns a custom form display if it exists.
+ */
+function _getCustomGameFormDisplay($entity, $game_type) {
+  $id = "node.game.{$entity->field_game_id->value}_{$game_type}_game";
+
+  $storage = \Drupal::entityManager()->getStorage('entity_form_display');
+  $display = $storage->load($id);
+
+  return $display;
+}
+
+/**
+ * Form alter for node.
+ */
+function nylotto_data_import_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+
+  if ($form_id == 'node_game_edit_form') {
+    // Handling for drawing games.
+    $node = $form_state->getFormObject()->getEntity();
+
+    if ($node->bundle() == 'game') {
+      $options = [];
+      foreach ($node->field_game_options->getValue() as $value) {
+        $options[$value['value']] = $value['value'];
+      }
+      $settings = [
+        'game_type' => ($node->field_game_type) ? $node->field_game_type->getValue()[0]['value'] : [],
+        'game_options' => $options,
+      ];
+      $form['#attached']['drupalSettings']['nylotto_data'] = $settings;
+      $form['#attached']['library'][] = 'nylotto_data_import/edit_behaviors.games';
+    }
+  }
+  if ($form_id == 'views_exposed_form') {
+    if ($form['#id'] == 'views-exposed-form-payout-verification-page-1') {
+      $ids = \Drupal::entityQuery('node')
+        ->condition('type', 'game')
+        ->condition('field_feature_approved', 1)
+        ->execute();
+      $options = ['' => ''];
+      foreach (entity_load_multiple('node', $ids) as $id => $node) {
+        $options[$node->label()] = $node->label();
+      }
+
+      $form['title']['#type'] = 'select';
+      $form['title']['#options'] = $options;
+      $form['title']['#size'] = 1;
+    }
+    elseif ($form['#id'] == 'views-exposed-form-payout-verification-page-3') {
+      $ids = \Drupal::entityQuery('node')
+        ->condition('type', 'game')
+        ->execute();
+      $options = ['' => ''];
+      foreach (entity_load_multiple('node', $ids) as $id => $node) {
+        $options[$node->label()] = $node->label();
+      }
+
+      $form['title']['#type'] = 'select';
+      $form['title']['#options'] = $options;
+      $form['title']['#size'] = 1;
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function nylotto_data_import_field_widget_form_alter(&$element, FormStateInterface &$form_state, $context) {
+  if (get_class($context['widget']) === 'Drupal\paragraphs\Plugin\Field\FieldWidget\ParagraphsWidget' && !empty($context['form']['#attributes'])) {
+
+    if ($element['#paragraph_type'] == 'drawing_data') {
+      $paragraph = $context['items'][$context['delta']]->entity;
+
+      $drawDateLabel = 'No Draw Date entered';
+      if (($paragraph->field_draw_date)) {
+        $drawDateLabel = $paragraph->field_draw_date->value;
+      }
+
+      if (($paragraph->field_draw_time)) {
+        $drawDateLabel .= " {$paragraph->field_draw_time->value} ";
+      }
+
+      $element['top']['summary']['fields_info']['#summary']['content'] = $drawDateLabel;
+    }
+
+    if ($element['#paragraph_type'] == 'winners_data') {
+      $paragraph = $context['items'][$context['delta']]->entity;
+      $element['subform']['#attributes']['class'][] = 'winners-data-wrapper';
+      $element['top']['summary']['fields_info']['#summary']['content'] = [
+        t('Level') . ": " . (($paragraph->field_prize_label) ? $paragraph->field_prize_label->value : 'No Prize level'),
+        t('Winners') . ": " . (($paragraph->field_prize_winners) ? $paragraph->field_prize_winners->value : '0'),
+        t('Amount') . ": " . (($paragraph->field_prize_amount) ? $paragraph->field_prize_amount->value : '0'),
+      ];
+    }
+
+    if ($element['#paragraph_type'] == 'winning_location') {
+      $paragraph = $context['items'][$context['delta']]->entity;
+      $element['subform']['#attributes']['class'][] = 'winner-location-data-wrapper';
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function nylotto_data_import_entity_base_field_info(ContentEntityType $entity_type) {
+  $fields = [];
+  if ($entity_type->id() === 'node' || $entity_type->id() == 'paragraph') {
+    $fields['normalized'] = BaseFieldDefinition::create('map')->setLabel(t('Normalized'));
+  }
+
+  return $fields;
+}
+
+/**
+ * Delete all imported draw.
+ */
+function clean_imports_task($ids, &$context) {
+
+  foreach ($ids as $pids_key => $pids_value) {
+    $entity = \Drupal::entityTypeManager()->getStorage('paragraph')->load($pids_value);
+    $entity->delete();
+    $delete_entity[] = $entity->id();
+  }
+  $context['results'][] = count($delete_entity);
+}
+
+/**
+ * Delete all imported draw.
+ */
+function clean_imports_drawing_task($ids, &$context) {
+  $storage_handler = \Drupal::entityTypeManager()->getStorage("drawing");
+  $entities = $storage_handler->loadMultiple($ids);
+  $storage_handler->delete($entities);
+  $context['results'][] = count($ids);
+}
+
+/**
+ * Delete all imported paragraph.
+ */
+function clean_imports_paragraph_task($ids, &$context) {
+  $storage_handler = \Drupal::entityTypeManager()->getStorage("paragraph");
+  $entities = $storage_handler->loadMultiple($ids);
+  $storage_handler->delete($entities);
+  $context['results'][] = count($ids);
+}
+
+/**
+ * Batch 'finished' callback used by both batch 1 and batch 2.
+ */
+function clean_imports_finished($success, $results, $operations) {
+  $messenger = \Drupal::messenger();
+  if ($success) {
+
+    // Here we could do something meaningful with the results.
+    // We just display the number of nodes we processed...
+    $messenger
+      ->addMessage(t('@count results processed.', [
+        '@count' => count($results),
+      ]));
+    $messenger
+      ->addMessage(t('The final result was "%final"', [
+        '%final' => end($results),
+      ]));
+  }
+  else {
+
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    $messenger
+      ->addMessage(t('An error occurred while processing @operation with arguments : @args', [
+        '@operation' => $error_operation[0],
+        '@args' => print_r($error_operation[0], TRUE),
+      ]));
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function nylotto_data_import_entity_presave(EntityInterface $entity) {
+  if ($entity->bundle() == 'drawing_data') {
+    $winning_number = $entity->get('field_winning_numbers_txt')->getString();
+    if (!empty($winning_number)) {
+      $winningNumbers = explode('|', $winning_number);
+      foreach ($winningNumbers as $winningNumberskey => $winningNumbersvalue) {
+        if (!empty($winningNumbersvalue)) {
+          $entity->field_winning_numbers_split->appendItem($winningNumbersvalue);
+        }
+      }
+    }
+  }
+}

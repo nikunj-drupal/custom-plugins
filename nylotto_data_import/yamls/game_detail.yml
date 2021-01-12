@@ -1,0 +1,49 @@
+record_types: 
+- name: "Drawing"
+  record_type: "drawing"
+  fields:
+    game_number:
+      pos: 0
+      length: 4
+      cobol_code: "9(4)"
+      description: "Game Number."
+    comma_one:
+      pos: 4
+      length: 1
+      cobol_code: "X"
+      description: "Comma."
+    number_paid:
+      pos: 5
+      length: 9
+      cobol_code: "9(9)"
+      description: "Number Paid."
+    comma_two:
+      pos: 14
+      length: 1
+      cobol_code: "X"
+      description: "Comma."
+    number_unpaid:
+      pos: 15
+      length: 9
+      cobol_code: "9(9)"
+      description: "Number Unpaid."
+    comma_three:
+      pos: 24
+      length: 1
+      cobol_code: "X"
+      description: "Comma."
+    total:
+      pos: 25
+      length: 9
+      cobol_code: "9(9)"
+      description: "Total."
+    comma_four:
+      pos: 34
+      length: 1
+      cobol_code: "X"
+      description: "Comma."
+    prize_description:
+      pos: 35
+      length: 20
+      cobol_code: "X(20)"
+      description: "Prize Description."

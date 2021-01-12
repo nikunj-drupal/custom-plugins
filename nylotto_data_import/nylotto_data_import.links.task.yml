@@ -1,0 +1,33 @@
+nylotto_data.manual_import:
+  title: Manual File Import
+  route_name: nylotto_data.manual_import
+  base_route: nylotto_data.manual_import
+  weight: -20
+
+entity.import_source.collection:
+  title: Automatic Import Sources
+  route_name: entity.import_ftp_source.collection
+  base_route: nylotto_data.manual_import
+
+nylotto_data.ftp_settings:
+  title: Private Key Settings
+  route_name: nylotto_data.ftp_settings
+  base_route: nylotto_data.manual_import
+  weight: 20
+
+nylotto_data.quickdraw_fix:
+  title: Quick Draw 12:00am - 4:00am Fix
+  route_name: nylotto_data.quickdraw_fix
+  base_route: nylotto_data.manual_import
+  weight: 30
+
+nylotto_data_import.import_config:
+  title: 'Track File Import'
+  base_route: nylotto_data.import_config
+  route_name: nylotto_data.import_config
+
+nylotto_data_import.import_cron:
+  title: 'Cron Configuration'
+  base_route: nylotto_data.import_config
+  route_name: nylotto_data.enable_import
+  weight: 100

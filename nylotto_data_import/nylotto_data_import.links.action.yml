@@ -1,0 +1,5 @@
+entity.import_ftp_source.add_form:
+  route_name: entity.import_ftp_source.add_form
+  title: 'Add FTP Source'
+  appears_on:
+    - entity.import_ftp_source.collection
